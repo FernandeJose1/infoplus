@@ -8,13 +8,13 @@
     <application
         android:label="InfoPlus"
         android:icon="@mipmap/ic_launcher">
-
-        <!-- Registra o serviço de pagamento -->
+        
+        <!-- Serviço de pagamento nativo -->
         <service
             android:name="com.ussd.infoplus.EmolaPaymentService"
             android:exported="false"/>
 
-        <!-- Activity principal -->
+        <!-- MainActivity usando embedding v2 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,10 +23,11 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- ... -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
-
-        <!-- Outras activities, receivers, etc -->
 
     </application>
 </manifest>
