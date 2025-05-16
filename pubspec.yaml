@@ -3,8 +3,8 @@ description: Aplicativo Flutter InfoPlus - offline-first
 version: 2.0.0+2
 
 environment:
-  dart: '>=3.4.0 <4.0.0'
-  flutter: 3.29.0
+  sdk: '>=3.4.0 <4.0.0'  # Corrigido: trocado 'dart' por 'sdk'
+  flutter: '3.29.0'      # Adicionado aspas para a versão do Flutter
 
 dependencies:
   flutter:
