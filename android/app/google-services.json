@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56112123783",
+    "project_id": "ussd-info-plus",
+    "storage_bucket": "ussd-info-plus.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56112123783:android:2e62f403534c17f5730d22",
+        "android_client_info": {
+          "package_name": "USSD.info.plus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVLxUBPyvuAyUVstA_x2NNYn8RhSjM2Zg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

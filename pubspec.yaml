@@ -1,0 +1,55 @@
+name: infoplus
+description: Aplicativo Flutter InfoPlus - offline-first
+version: 2.0.0+2
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.0
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.8.1
+  http: ^0.14.0
+  flutter_secure_storage: ^8.0.0
+  sqflite: ^2.0.0+4
+  connectivity_plus: ^3.0.3
+  firebase_core: ^2.4.0
+  firebase_auth: ^4.2.0
+  cloud_firestore: ^4.4.0
+  firebase_functions: ^4.2.0
+  firebase_messaging: ^14.2.0
+  drift: ^2.0.0
+  path_provider: ^2.0.0
+  flutter_dotenv: ^5.1.0
+  intl: ^0.18.1
+  permission_handler: ^11.3.0
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  shared_preferences: ^2.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.0
+  freezed: ^2.4.0
+  json_serializable: ^6.6.0
+  drift_dev: ^2.0.0
+  mockito: ^5.4.4
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
