@@ -1,4 +1,4 @@
-name: Flutter CI - Testes e Build Debug APK
+name: Flutter CI/CD ─ Teste e Build Debug APK
 
 on:
   push:
@@ -6,30 +6,45 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:                             # Controla execuções duplicadas
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true               # Cancela runs anteriores na mesma branch 5
+
 jobs:
-  build:
-    name: Testar e Compilar APK
+  test-and-build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:                           # Exemplo de matriz para múltiplos canais (Linux, macOS) 6
+        os: [ubuntu-latest, macos-latest]
+
     steps:
-      - name: Clonar repositório
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Instalar Flutter SDK
+      - name: Cache do Pub           # Cache de dependências Dart/Flutter 7
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Setup Flutter SDK        # Configura Flutter (pinned v2.19.0) 8
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # compatível com Dart >=3.4.0
+          flutter-version: '3.19.0'
 
-      - name: Verificar versão
+      - name: Verificar versão do Flutter
         run: flutter --version
 
-      - name: Instalar dependências do projeto
+      - name: Instalar dependências
         run: flutter pub get
 
-      - name: Gerar código com build_runner
+      - name: Gerar código         # build_runner para freezed, json_serializable, drift 9
         run: flutter pub run build_runner build --delete-conflicting-outputs
 
-      - name: Executar testes unitários
+      - name: Executar testes
         run: flutter test
 
       - name: Adicionar google-services.json
@@ -37,11 +52,11 @@ jobs:
           mkdir -p android/app
           echo "${{ secrets.FIREBASE_ANDROID_JSON }}" > android/app/google-services.json
 
-      - name: Compilar APK (debug sem assinatura)
+      - name: Build APK Debug
         run: flutter build apk --debug
 
-      - name: Upload do APK compilado
-        uses: actions/upload-artifact@v3
+      - name: Upload do APK              # Upload com v4 para evitar erros de depreciação 10
+        uses: actions/upload-artifact@v4
         with:
-          name: infoplus-debug-apk
+          name: infoplus-debug-${{ matrix.os }}
           path: build/app/outputs/flutter-apk/app-debug.apk
