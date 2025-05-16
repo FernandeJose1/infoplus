@@ -1,35 +1,47 @@
-name: Build APK (debug unsigned)
+name: Flutter CI - Testes e Build Debug APK
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build-apk:
+  build:
+    name: Testar e Compilar APK
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v3
+      - name: Clonar repositório
+        uses: actions/checkout@v3
 
-    - name: Instalar Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.0'
+      - name: Instalar Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0' # compatível com Dart >=3.4.0
 
-    - name: Instalar dependências
-      run: flutter pub get
+      - name: Verificar versão
+        run: flutter --version
 
-    - name: Adicionar google-services.json
-      run: |
-        mkdir -p android/app
-        echo "${{ secrets.FIREBASE_ANDROID_JSON }}" > android/app/google-services.json
+      - name: Instalar dependências do projeto
+        run: flutter pub get
 
-    - name: Compilar APK (debug)
-      run: flutter build apk --debug
+      - name: Gerar código com build_runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: infoplus-debug-apk
-        path: build/app/outputs/flutter-apk/app-debug.apk
+      - name: Executar testes unitários
+        run: flutter test
+
+      - name: Adicionar google-services.json
+        run: |
+          mkdir -p android/app
+          echo "${{ secrets.FIREBASE_ANDROID_JSON }}" > android/app/google-services.json
+
+      - name: Compilar APK (debug sem assinatura)
+        run: flutter build apk --debug
+
+      - name: Upload do APK compilado
+        uses: actions/upload-artifact@v3
+        with:
+          name: infoplus-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
