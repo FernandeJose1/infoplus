@@ -1,4 +1,4 @@
-name: Flutter CI/CD ─ Teste e Build Debug APK
+name: CI Flutter ─ Test & Debug APK
 
 on:
   push:
@@ -6,23 +6,22 @@ on:
   pull_request:
     branches: [main]
 
-concurrency:                             # Controla execuções duplicadas
+concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true               # Cancela runs anteriores na mesma branch 5
+  cancel-in-progress: true
 
 jobs:
-  test-and-build:
+  test-build:
     runs-on: ubuntu-latest
-
     strategy:
-      matrix:                           # Exemplo de matriz para múltiplos canais (Linux, macOS) 6
+      matrix:
         os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Cache do Pub           # Cache de dependências Dart/Flutter 7
+      - name: Cache de pacotes pub
         uses: actions/cache@v3
         with:
           path: ~/.pub-cache
@@ -30,21 +29,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      - name: Setup Flutter SDK        # Configura Flutter (pinned v2.19.0) 8
+      - name: Configurar Flutter (estável)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          channel: stable         # Puxa sempre o último stable (≥3.22) 5
 
-      - name: Verificar versão do Flutter
+      - name: Verificar versão
         run: flutter --version
 
       - name: Instalar dependências
         run: flutter pub get
 
-      - name: Gerar código         # build_runner para freezed, json_serializable, drift 9
+      - name: Gerar código (build_runner)
         run: flutter pub run build_runner build --delete-conflicting-outputs
 
-      - name: Executar testes
+      - name: Executar testes unitários
         run: flutter test
 
       - name: Adicionar google-services.json
@@ -52,10 +51,10 @@ jobs:
           mkdir -p android/app
           echo "${{ secrets.FIREBASE_ANDROID_JSON }}" > android/app/google-services.json
 
-      - name: Build APK Debug
+      - name: Compilar APK Debug
         run: flutter build apk --debug
 
-      - name: Upload do APK              # Upload com v4 para evitar erros de depreciação 10
+      - name: Upload do APK Debug
         uses: actions/upload-artifact@v4
         with:
           name: infoplus-debug-${{ matrix.os }}
