@@ -15,10 +15,10 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
-        // Registrar o plugin USSDHandler
+        // Registrar o plugin USSDHandler (implementado como FlutterPlugin)
         ussdHandler = USSDHandler()
-        ussdHandler.onAttachedToEngine(flutterEngine.dartExecutor.binaryMessenger as io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding)
+        ussdHandler.onAttachedToEngine(flutterEngine.dartExecutor.binaryMessenger,
+                                       flutterEngine)  // v2 binding 3
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -31,19 +31,18 @@ class MainActivity : FlutterActivity() {
                     result.success("Pagamento iniciado")
                 }
                 "startUSSDListener" -> {
-                    // Se precisar ouvir resposta USSD, implementar aqui
                     result.success("Listener iniciado")
                 }
                 else -> result.notImplemented()
             }
         }
 
+        // Listener para estado de chamadas (opcional)
         phoneStateListener = object : PhoneStateListener() {
             override fun onCallStateChanged(state: Int, phoneNumber: String?) {
-                // Pode implementar lógica para chamadas aqui, se quiser
+                // Implementar lógica desejada
             }
         }
-
         val tm = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         tm.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
     }
