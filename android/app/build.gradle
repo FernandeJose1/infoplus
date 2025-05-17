@@ -1,0 +1,15 @@
+android {
+    namespace 'com.ussd.infoplus' // obrigatório no AGP 8+
+
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "com.ussd.infoplus"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    ...
+}
