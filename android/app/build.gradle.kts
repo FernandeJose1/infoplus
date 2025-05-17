@@ -1,5 +1,3 @@
-// Módulo app: contém namespace, NDK e minSdk configurados corretamente
-
 import java.util.Properties
 
 plugins {
@@ -7,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val localProps = Properties().apply {
+val localProperties = Properties().apply {
     file("${rootDir}/local.properties")
         .takeIf { it.exists() }
         ?.inputStream()
@@ -23,8 +21,8 @@ android {
         applicationId = "com.ussd.infoplus"
         minSdk = 23
         targetSdk = 33
-        versionCode = localProps.getProperty("flutter.versionCode")?.toInt() ?: 1
-        versionName = localProps.getProperty("flutter.versionName") ?: "1.0.0"
+        versionCode = localProperties.getProperty("flutter.versionCode")?.toInt() ?: 1
+        versionName = localProperties.getProperty("flutter.versionName") ?: "1.0.0"
         multiDexEnabled = true
     }
 
