@@ -39,18 +39,26 @@ jobs:
 
       # 1) Regenera a pasta Android com embedding v2
       - name: Remover diretório Android antigo
-        run: rm -rf android/                                  # elimina v1 embedding 2
+        run: rm -rf android/
 
       - name: Gerar plataforma Android (embedding v2)
-        run: flutter create . --platforms=android            # cria Android v2 3
+        run: flutter create . --platforms=android
 
       # 2) Reaplica customizações no build.gradle via sed
-      - name: Aplicar sed em android/app/build.gradle
+      - name: Aplicar sed em build.gradle do módulo Android
         run: |
-          # Insere namespace e ndkVersion logo após compileSdkVersion
-          sed -i "/compileSdkVersion 33/a \ \ \ \ namespace 'com.ussd.infoplus'\n\ \ \ \ ndkVersion \"27.0.12077973\"" android/app/build.gradle
-          # Atualiza minSdkVersion para 23
-          sed -i "s/minSdkVersion 21/minSdkVersion 23/" android/app/build.gradle
+          # Se o arquivo existir em android/app/build.gradle, patch nele
+          if [ -f android/app/build.gradle ]; then
+            sed -i "/compileSdkVersion 33/a \ \ \ \ namespace 'com.ussd.infoplus'\n\ \ \ \ ndkVersion \"27.0.12077973\"" android/app/build.gradle
+            sed -i "s/minSdkVersion 21/minSdkVersion 23/" android/app/build.gradle
+          # Caso contrário, aplica em android/build.gradle
+          elif [ -f android/build.gradle ]; then
+            sed -i "/compileSdkVersion 33/a \ \ \ \ namespace 'com.ussd.infoplus'\n\ \ \ \ ndkVersion \"27.0.12077973\"" android/build.gradle
+            sed -i "s/minSdkVersion 21/minSdkVersion 23/" android/build.gradle
+          else
+            echo "Erro: nenhum build.gradle encontrado para patchar"
+            exit 1
+          fi
 
       - name: Instalar dependências
         run: flutter pub get
