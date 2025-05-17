@@ -9,6 +9,7 @@ class Job with _$Job {
     required String id,
     required String title,
     required String location,
+    required String province, // Adicionado
     required String category,
     required DateTime createdAt,
   }) = _Job;

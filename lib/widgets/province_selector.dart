@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProvinceSelector extends StatelessWidget {
   final String selected;
-  final Function(String) onChanged;
+  final void Function(String?) onChanged;
 
   const ProvinceSelector({required this.selected, required this.onChanged, super.key});
 

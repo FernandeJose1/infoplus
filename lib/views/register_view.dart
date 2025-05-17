@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/user.dart';
+import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
+import '../models/user.dart' as app_user;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -47,9 +48,10 @@ class _RegisterViewState extends State<RegisterView> {
     });
 
     final userProvider = context.read<UserProvider>();
-    final uuid = const Uuid();
+    final authProvider = context.read<AuthProvider>();
+    final uuid = Uuid();
 
-    final user = User(
+    final user = app_user.UserModel(
       id: uuid.v4(),
       name: _nameController.text.trim(),
       phoneNumber: _phoneController.text.trim(),
@@ -58,6 +60,7 @@ class _RegisterViewState extends State<RegisterView> {
 
     try {
       await userProvider.registerUser(user);
+      await authProvider.fetchUserProfile();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registro efetuado com sucesso!')),
       );

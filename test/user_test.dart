@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:infoplus/models/user.dart';
+import 'package:infoplus/models/user.dart'; // Importação correta
 
 void main() {
   group('User model', () {
     test('toMap e fromMap funcionam corretamente', () {
-      final user = User(
+      final user = UserModel(
         id: '123',
         name: 'Joana',
         phoneNumber: '+258841234567',
@@ -12,7 +12,7 @@ void main() {
       );
 
       final map = user.toMap();
-      final fromMap = User.fromMap(map);
+      final fromMap = UserModel.fromMap(map);
 
       expect(fromMap.id, user.id);
       expect(fromMap.name, user.name);

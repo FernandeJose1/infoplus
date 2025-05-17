@@ -37,7 +37,7 @@ class _PaymentViewState extends State<PaymentView> {
     final pointsProvider = context.read<PointsProvider>();
     final phone = auth.firebaseUser?.phoneNumber ?? '';
 
-    await payment.pay(valor, phone);
+    await payment.pay(valor.toDouble(), phone);
 
     if (payment.response != null && payment.response!.contains('USSD enviado')) {
       final userId = auth.firebaseUser!.uid;
@@ -70,9 +70,16 @@ class _PaymentViewState extends State<PaymentView> {
       body: Center(
         child: _processing
             ? const LoadingWidget()
-            : ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Tentar Novamente'),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Pagamento não concluído'),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
               ),
       ),
     );

@@ -12,8 +12,8 @@ import 'providers/price_provider.dart';
 import 'providers/reward_provider.dart';
 import 'providers/admin_provider.dart';
 import 'providers/user_provider.dart';
-import 'providers/consulta_historico_provider.dart'; // NOVO
-import 'providers/points_provider.dart'; // NOVO
+import 'providers/consulta_historico_provider.dart';
+import 'providers/points_provider.dart';
 
 import 'views/splash_view.dart';
 import 'views/login_view.dart';
@@ -24,7 +24,7 @@ import 'views/price_list_view.dart';
 import 'views/reward_view.dart';
 import 'views/admin_view.dart';
 import 'views/register_view.dart';
-import 'views/historico_consultas_view.dart'; // NOVO
+import 'views/historico_consulta_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,17 +40,17 @@ class InfoPlusApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: () => ConnectivityProvider()),
-        ChangeNotifierProvider(create: () => AuthProvider()),
-        ChangeNotifierProvider(create: () => PaymentProvider()),
-        ChangeNotifierProvider(create: () => SyncProvider()),
-        ChangeNotifierProvider(create: () => JobProvider()),
-        ChangeNotifierProvider(create: () => PriceProvider()),
-        ChangeNotifierProvider(create: () => RewardProvider()),
-        ChangeNotifierProvider(create: () => AdminProvider()),
-        ChangeNotifierProvider(create: () => UserProvider()),
-        ChangeNotifierProvider(create: () => ConsultaHistoricoProvider()), // NOVO
-        ChangeNotifierProvider(create: (_) => PointsProvider()), // NOVO
+        ChangeNotifierProvider(create: (context) => ConnectivityProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => PaymentProvider()),
+        ChangeNotifierProvider(create: (context) => SyncProvider()),
+        ChangeNotifierProvider(create: (context) => JobProvider()),
+        ChangeNotifierProvider(create: (context) => PriceProvider()),
+        ChangeNotifierProvider(create: (context) => RewardProvider()),
+        ChangeNotifierProvider(create: (context) => AdminProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => ConsultaHistoricoProvider()),
+        ChangeNotifierProvider(create: (context) => PointsProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) {
@@ -88,7 +88,7 @@ class InfoPlusApp extends StatelessWidget {
                 case '/rewards':
                   page = auth.firebaseUser == null ? const LoginView() : const RewardView();
                   break;
-                case '/historico': // NOVO
+                case '/historico':
                   page = auth.firebaseUser == null ? const LoginView() : const HistoricoConsultasView();
                   break;
                 case '/admin':

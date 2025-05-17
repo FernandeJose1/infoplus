@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user.dart';
+import '../models/user.dart' as app_user;
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   User? firebaseUser;
-  UserModel? userProfile;
+  app_user.UserModel? userProfile;
   String? verificationId;
   bool loading = false;
 
@@ -21,21 +21,21 @@ class AuthProvider extends ChangeNotifier {
     await _auth.verifyPhoneNumber(
       phoneNumber: phone,
       verificationCompleted: (credential) async {
-        final result = await _auth.signInWithCredential(credential);
-        firebaseUser = result.user;
-        await fetchUserProfile();
+        await _signInWithCredential(credential);
       },
       verificationFailed: (e) {
         loading = false;
         notifyListeners();
         debugPrint('Erro: ${e.message}');
       },
-      codeSent: (_, vid) {
+      codeSent: (String vid, int? resendToken) {
         verificationId = vid;
         loading = false;
         notifyListeners();
       },
-      codeAutoRetrievalTimeout: (_) {},
+      codeAutoRetrievalTimeout: (String vid) {
+        verificationId = vid;
+      },
     );
   }
 
@@ -50,9 +50,12 @@ class AuthProvider extends ChangeNotifier {
       smsCode: smsCode,
     );
 
+    await _signInWithCredential(credential);
+  }
+
+  Future<void> _signInWithCredential(PhoneAuthCredential credential) async {
     final result = await _auth.signInWithCredential(credential);
     firebaseUser = result.user;
-
     await fetchUserProfile();
   }
 
@@ -65,14 +68,13 @@ class AuthProvider extends ChangeNotifier {
         .get();
 
     if (snapshot.exists) {
-      userProfile = UserModel.fromMap(snapshot.data()!);
+      userProfile = app_user.UserModel.fromMap(snapshot.data()!);
     } else {
-      userProfile = UserModel(
+      userProfile = app_user.UserModel(
         id: firebaseUser!.uid,
-        name: '',
         phoneNumber: firebaseUser!.phoneNumber ?? '',
+        name: '',
         province: '',
-        role: 'user',
       );
       await _firestore.collection('users').doc(firebaseUser!.uid).set(userProfile!.toMap());
     }

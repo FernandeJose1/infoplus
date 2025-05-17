@@ -16,7 +16,7 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       final auth = context.read<AuthProvider>();
-      if (auth.user != null) {
+      if (auth.firebaseUser != null) {
         Navigator.pushReplacementNamed(context, '/home');
       } else {
         Navigator.pushReplacementNamed(context, '/login');
