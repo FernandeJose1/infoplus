@@ -23,7 +23,7 @@ dependencies:
   # Armazenamento e cache local
   flutter_secure_storage: ^8.0.0
   sqflite: ^2.0.0+4
-  connectivity_plus: ^3.0.3
+  connectivity_plus: ^6.1.4
 
   # FlutterFire Core & Auth
   firebase_core: ^3.13.0
