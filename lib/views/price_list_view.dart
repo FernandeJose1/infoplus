@@ -52,8 +52,10 @@ class _PriceListViewState extends State<PriceListView> {
           ProvinceSelector(
             selected: selectedProvince,
             onChanged: (val) async {
-              setState(() => selectedProvince = val);
-              await context.read<PriceProvider>().fetchPrices(val);
+              if (val != null) {
+                setState(() => selectedProvince = val);
+                await context.read<PriceProvider>().fetchPrices(val);
+              }
             },
           ),
           Expanded(
