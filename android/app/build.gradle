@@ -7,12 +7,16 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace 'com.ussd.infoplus' // OBRIGATÓRIO no AGP 8+
+    namespace 'com.ussd.infoplus'          // Obrigatório para AGP 8+
     compileSdkVersion 33
+
+    // **1. Definindo a versão do NDK exigida pelos plugins**
+    ndkVersion "27.0.12077973"
 
     defaultConfig {
         applicationId "com.ussd.infoplus"
-        minSdkVersion 21
+        // **2. Elevando o minSdkVersion para 23**
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -23,7 +27,6 @@ android {
 
     buildTypes {
         release {
-            // Desabilite obfuscation se não usar ProGuard/R8
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
