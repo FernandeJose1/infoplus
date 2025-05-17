@@ -5,12 +5,12 @@ import '../models/user.dart';
 class UserProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> registerUser(User user) async {
+  Future<void> registerUser(UserModel user) async {
     final docRef = _firestore.collection('users').doc(user.id);
     await docRef.set(user.toMap());
   }
 
-  Future<User?> getUserByPhone(String phoneNumber) async {
+  Future<UserModel?> getUserByPhone(String phoneNumber) async {
     final query = await _firestore
         .collection('users')
         .where('phoneNumber', isEqualTo: phoneNumber)
@@ -18,6 +18,6 @@ class UserProvider extends ChangeNotifier {
         .get();
 
     if (query.docs.isEmpty) return null;
-    return User.fromMap(query.docs.first.data());
+    return UserModel.fromMap(query.docs.first.data());
   }
 }
