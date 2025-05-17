@@ -1,33 +1,28 @@
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
-// 1. Carrega o local.properties
-val localProperties = Properties().apply {
-    val localPropsFile = rootProject.file("local.properties")
-    if (localPropsFile.exists()) {
-        localPropsFile.inputStream().use { load(it) }
-    }
+// 1. Agora carregamos local.properties **somente neste arquivo**
+val localProps = Properties().apply {
+    file("${rootDir}/local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
 android {
-    // 2. Usa as propriedades do local.properties
-    val flutterSdk: String = localProperties.getProperty("flutter.sdk")
-    val flutterVersionCode: Int = localProperties.getProperty("flutter.versionCode").toInt()
-    val flutterVersionName: String = localProperties.getProperty("flutter.versionName")
+    // 2. Extraímos os valores do Flutter via local.properties
+    val flutterVersionCode: Int = localProps.getProperty("flutter.versionCode")?.toInt() ?: 1
+    val flutterVersionName: String = localProps.getProperty("flutter.versionName") ?: "1.0.0"
 
-    namespace = "com.ussd.infoplus"              // namespace obrigatório AGP 8+
+    namespace = "com.ussd.infoplus"            // obrigatório AGP 8+
     compileSdk = 33
 
-    ndkVersion = "27.0.12077973"                  // NDK exigido pelos plugins
+    ndkVersion = "27.0.12077973"                // NDK exigido pelos plugins
 
     defaultConfig {
         applicationId = "com.ussd.infoplus"
-        minSdk = 23                               // mínimo exigido pelo Firebase Auth
+        minSdk = 23                             // exigido pelo firebase_auth
         targetSdk = 33
         versionCode = flutterVersionCode
         versionName = flutterVersionName
