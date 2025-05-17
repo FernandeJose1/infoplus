@@ -5,11 +5,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val localProperties = Properties().apply {
-    file("${rootDir}/local.properties")
-        .takeIf { it.exists() }
-        ?.inputStream()
-        ?.use { load(it) }
+val propsFile = rootProject.file("local.properties")
+val localProps = Properties().apply {
+    if (propsFile.exists()) {
+        propsFile.inputStream().use { load(it) }
+    }
 }
 
 android {
@@ -21,8 +21,8 @@ android {
         applicationId = "com.ussd.infoplus"
         minSdk = 23
         targetSdk = 33
-        versionCode = localProperties.getProperty("flutter.versionCode")?.toInt() ?: 1
-        versionName = localProperties.getProperty("flutter.versionName") ?: "1.0.0"
+        versionCode = localProps.getProperty("flutter.versionCode")?.toInt() ?: 1
+        versionName = localProps.getProperty("flutter.versionName") ?: "1.0.0"
         multiDexEnabled = true
     }
 
