@@ -44,7 +44,7 @@ class _JobListViewState extends State<JobListView> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<UserProvider>();
+    final auth = context.watch<AuthProvider>();
     final jobs = context.watch<JobProvider>().jobsByProvince(selectedProvince);
 
     return Scaffold(
