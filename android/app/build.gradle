@@ -1,6 +1,13 @@
-android {
-    namespace 'com.ussd.infoplus' // obrigatório no AGP 8+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
 
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    namespace 'com.ussd.infoplus' // OBRIGATÓRIO no AGP 8+
     compileSdkVersion 33
 
     defaultConfig {
@@ -9,7 +16,34 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        // Necessário se usar multidex
+        multiDexEnabled true
     }
 
-    ...
+    buildTypes {
+        release {
+            // Desabilite obfuscation se não usar ProGuard/R8
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
