@@ -32,10 +32,17 @@ jobs:
       - name: Configurar Flutter (estável)
         uses: subosito/flutter-action@v2
         with:
-          channel: stable         # Puxa sempre o último stable (≥3.22) 5
+          channel: stable
 
       - name: Verificar versão
         run: flutter --version
+
+      # 1) Regenera a pasta Android com embedding v2
+      - name: Remover diretório Android antigo
+        run: rm -rf android/                                  # remove Android embedding v1 0
+
+      - name: Gerar plataforma Android (embedding v2)
+        run: flutter create . --platforms=android            # recria android/ usando v2 embedding 1
 
       - name: Instalar dependências
         run: flutter pub get
