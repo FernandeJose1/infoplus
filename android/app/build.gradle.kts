@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,24 +6,31 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-android {
-    namespace = "com.ussd.infoplus"           // Namespace obrigatório AGP 8+
-    compileSdk = 33                           // SDK de compilação
+// 1. Carrega o local.properties
+val localProperties = Properties().apply {
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        localPropsFile.inputStream().use { load(it) }
+    }
+}
 
-    // 1) Força a NDK 27 compatível com FlutterFire e outros plugins
-    ndkVersion = "27.0.12077973"
+android {
+    // 2. Usa as propriedades do local.properties
+    val flutterSdk: String = localProperties.getProperty("flutter.sdk")
+    val flutterVersionCode: Int = localProperties.getProperty("flutter.versionCode").toInt()
+    val flutterVersionName: String = localProperties.getProperty("flutter.versionName")
+
+    namespace = "com.ussd.infoplus"              // namespace obrigatório AGP 8+
+    compileSdk = 33
+
+    ndkVersion = "27.0.12077973"                  // NDK exigido pelos plugins
 
     defaultConfig {
         applicationId = "com.ussd.infoplus"
-        minSdk = 23                           // API mínima exigida pelos plugins Firebase
+        minSdk = 23                               // mínimo exigido pelo Firebase Auth
         targetSdk = 33
-        versionCode = project
-            .properties["flutter.versionCode"]
-            .toString()
-            .toInt()
-        versionName = project
-            .properties["flutter.versionName"]
-            .toString()
+        versionCode = flutterVersionCode
+        versionName = flutterVersionName
         multiDexEnabled = true
     }
 
@@ -34,9 +42,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        debug {
-            // configurações específicas de debug, se precisar
         }
     }
 
@@ -55,11 +60,4 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.multidex:multidex:2.0.1")
-    // outras dependências do seu app aqui...
-}
-
-// Se você precisar adicionar fontes ou assets, ajuste aqui:
-android.sourceSets["main"].apply {
-    assets.srcDir("src/main/assets")
-    // resources, java, etc.
 }
