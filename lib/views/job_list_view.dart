@@ -44,7 +44,7 @@ class _JobListViewState extends State<JobListView> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
+    final auth = context.watch<UserProvider>();
     final jobs = context.watch<JobProvider>().jobsByProvince(selectedProvince);
 
     return Scaffold(
@@ -54,8 +54,10 @@ class _JobListViewState extends State<JobListView> {
           ProvinceSelector(
             selected: selectedProvince,
             onChanged: (val) async {
-              setState(() => selectedProvince = val);
-              await context.read<JobProvider>().fetchJobs(val);
+              if (val != null) {
+                setState(() => selectedProvince = val);
+                await context.read<JobProvider>().fetchJobs(val);
+              }
             },
           ),
           Expanded(
