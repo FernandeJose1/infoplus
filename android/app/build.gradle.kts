@@ -1,3 +1,5 @@
+// Módulo app: contém namespace, NDK e minSdk configurados corretamente
+
 import java.util.Properties
 
 plugins {
@@ -5,27 +7,24 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-// 1. Agora carregamos local.properties **somente neste arquivo**
 val localProps = Properties().apply {
-    file("${rootDir}/local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+    file("${rootDir}/local.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { load(it) }
 }
 
 android {
-    // 2. Extraímos os valores do Flutter via local.properties
-    val flutterVersionCode: Int = localProps.getProperty("flutter.versionCode")?.toInt() ?: 1
-    val flutterVersionName: String = localProps.getProperty("flutter.versionName") ?: "1.0.0"
-
-    namespace = "com.ussd.infoplus"            // obrigatório AGP 8+
+    namespace = "com.ussd.infoplus"
     compileSdk = 33
-
-    ndkVersion = "27.0.12077973"                // NDK exigido pelos plugins
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.ussd.infoplus"
-        minSdk = 23                             // exigido pelo firebase_auth
+        minSdk = 23
         targetSdk = 33
-        versionCode = flutterVersionCode
-        versionName = flutterVersionName
+        versionCode = localProps.getProperty("flutter.versionCode")?.toInt() ?: 1
+        versionName = localProps.getProperty("flutter.versionName") ?: "1.0.0"
         multiDexEnabled = true
     }
 
