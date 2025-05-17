@@ -37,28 +37,64 @@ jobs:
       - name: Verificar versão
         run: flutter --version
 
-      # 1) Regenera a pasta Android com embedding v2
-      - name: Remover diretório Android antigo
-        run: rm -rf android/
-
-      - name: Gerar plataforma Android (embedding v2)
-        run: flutter create . --platforms=android
-
-      # 2) Reaplica customizações no build.gradle via sed
-      - name: Aplicar sed em build.gradle do módulo Android
+      # 1) Remover Android antigo e criar novo embedding v2
+      - name: Regenerar pasta Android
         run: |
-          # Se o arquivo existir em android/app/build.gradle, patch nele
-          if [ -f android/app/build.gradle ]; then
-            sed -i "/compileSdkVersion 33/a \ \ \ \ namespace 'com.ussd.infoplus'\n\ \ \ \ ndkVersion \"27.0.12077973\"" android/app/build.gradle
-            sed -i "s/minSdkVersion 21/minSdkVersion 23/" android/app/build.gradle
-          # Caso contrário, aplica em android/build.gradle
-          elif [ -f android/build.gradle ]; then
-            sed -i "/compileSdkVersion 33/a \ \ \ \ namespace 'com.ussd.infoplus'\n\ \ \ \ ndkVersion \"27.0.12077973\"" android/build.gradle
-            sed -i "s/minSdkVersion 21/minSdkVersion 23/" android/build.gradle
-          else
-            echo "Erro: nenhum build.gradle encontrado para patchar"
-            exit 1
-          fi
+          rm -rf android/
+          flutter create . --platforms=android
+
+      # 2) Sobrescrever build.gradle com todas as customizações
+      - name: Substituir android/app/build.gradle
+        run: |
+          cat > android/app/build.gradle << 'EOF'
+          def flutterRoot = localProperties.getProperty('flutter.sdk')
+          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+          def flutterVersionName = localProperties.getProperty('flutter.versionName')
+
+          apply plugin: 'com.android.application'
+          apply plugin: 'kotlin-android'
+          apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+          android {
+              namespace 'com.ussd.infoplus'
+              compileSdkVersion 33
+              ndkVersion "27.0.12077973"
+
+              defaultConfig {
+                  applicationId "com.ussd.infoplus"
+                  minSdkVersion 23
+                  targetSdkVersion 33
+                  versionCode flutterVersionCode.toInteger()
+                  versionName flutterVersionName
+                  multiDexEnabled true
+              }
+
+              buildTypes {
+                  release {
+                      shrinkResources false
+                      minifyEnabled false
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = '17'
+              }
+          }
+
+          flutter {
+              source '../..'
+          }
+
+          dependencies {
+              implementation 'androidx.multidex:multidex:2.0.1'
+          }
+          EOF
 
       - name: Instalar dependências
         run: flutter pub get
