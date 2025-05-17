@@ -39,10 +39,28 @@ jobs:
 
       # 1) Regenera a pasta Android com embedding v2
       - name: Remover diretório Android antigo
-        run: rm -rf android/                                  # remove Android embedding v1 0
+        run: rm -rf android/
 
       - name: Gerar plataforma Android (embedding v2)
-        run: flutter create . --platforms=android            # recria android/ usando v2 embedding 1
+        run: flutter create . --platforms=android
+
+      # 2) Reaplica customizações no build.gradle
+      - name: Aplicar patch em android/app/build.gradle
+        run: |
+          apply_patch<<'EOF'
+          *** Begin Patch
+          *** Update File: android/app/build.gradle
+          @@ android {
+          -    compileSdkVersion 33
+          +    compileSdkVersion 33
+          +    namespace 'com.ussd.infoplus'
+          +    ndkVersion "27.0.12077973"
+          
+          @@ defaultConfig {
+          -        minSdkVersion 21
+          +        minSdkVersion 23
+          *** End Patch
+          EOF
 
       - name: Instalar dependências
         run: flutter pub get
